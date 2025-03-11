@@ -9,7 +9,7 @@ const Login = () => {
             <h1>Login</h1>
             {user ? (
                 <>
-                    <p>Welcome, {user.displayName}!</p>
+                    <p>Welcome, {user.displayName} to WriteBetter!</p>
                     <button onClick={signOutUser}>Sign Out</button>
                 </>
             ) : (
