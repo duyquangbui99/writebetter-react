@@ -1,0 +1,116 @@
+/* Variables for consistent styling */
+:root {
+    --main-bg: #ffffff;
+    --secondary-bg: #f5f5f5;
+    --border-color: #ccc;
+    --shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    --button-bg: #4a6fa5;
+    --button-hover: #3a5982;
+    --button-disabled: #90a4c0;
+    --border-radius: 5px;
+}
+
+/* Editor Container */
+.editor-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--main-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+}
+
+/* Title */
+.editor-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+
+/* Two-column layout */
+.editor-wrapper {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Textarea */
+.editor-textarea {
+    width: 50%;
+    height: 300px;
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s ease;
+    font-family: 'Source Sans Pro', 'Arial', sans-serif;
+    line-height: 1.5;
+}
+
+.editor-textarea:focus {
+    border-color: #4a6fa5;
+}
+
+/* Paraphrased text area */
+.paraphrased-textarea {
+    background: var(--secondary-bg);
+}
+
+/* Toolbar */
+.editor-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Buttons */
+.toolbar-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+    font-weight: 500;
+    font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+}
+
+.toolbar-button:disabled {
+    background: var(--button-disabled);
+    cursor: not-allowed;
+}
+
+.toolbar-button:hover:not(:disabled) {
+    background: var(--button-hover);
+}
+
+.toolbar-button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .editor-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .editor-wrapper {
+        flex-direction: column;
+    }
+
+    .editor-textarea {
+        width: 100%;
+        height: 250px;
+    }
+}
