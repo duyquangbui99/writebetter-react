@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { addWritingData } from "../services/firestoreService.js";
 import "../styles/Editor.css";
 
 const Editor = () => {
+    /*
+        Add testing user's uid to Firestore,
+        Add testing writing data to Firestore,
+        Add Set Button to push data to Firestore
+        Updated, I Zhi Chen, 2025/03/22
+    */
+    const { user } = useAuth();
     const [text, setText] = useState(""); // Store essay text
     const [selectedText, setSelectedText] = useState(""); // Store selected text
     const [paraphrasedText, setParaphrasedText] = useState("");
@@ -32,7 +41,17 @@ const Editor = () => {
         console.log("Selected Text for Paraphrasing:", selectedText);
         setParaphrasedText(`(Paraphrased) ${selectedText}`);
     };
-
+    const handleUpdateFirestore = async () => {
+        const essayData = {
+            content: "2025/03/22 IZhi Chen Firesotre Testing",
+            time: "2023-04-30 02:52:16",
+            timeZone: "UTC-6",
+            totoalWords: "20",
+        };
+        // Save to Firestore
+        const setRef = await addWritingData(user.uid, "2025", "03-22", "Title Name", essayData);
+        console.log(setRef);
+    };
 
     return (
         <div className="editor-container">
@@ -62,6 +81,11 @@ const Editor = () => {
             <div className="editor-toolbar">
                 <button className="toolbar-button" disabled={!selectedText} onClick={handleParaphrase}>
                     Paraphrase
+                </button>
+            </div>
+            <div className="editor-toolbar">
+                <button className="toolbar-button" disabled={false} onClick={handleUpdateFirestore}>
+                    Update Essay
                 </button>
             </div>
         </div>
