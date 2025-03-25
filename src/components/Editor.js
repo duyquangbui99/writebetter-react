@@ -43,13 +43,13 @@ const Editor = () => {
     };
     const handleUpdateFirestore = async () => {
         const essayData = {
-            content: "2025/03/22 IZhi Chen Firesotre Testing",
+            content: "2025/03/25 Quang Firesotre Testing",
             time: "2023-04-30 02:52:16",
             timeZone: "UTC-6",
             totoalWords: "20",
         };
         // Save to Firestore
-        const setRef = await addWritingData(user.uid, "2025", "03-22", "Title Name", essayData);
+        const setRef = await addWritingData(user.uid, "2025", "03-25", "Title Name", essayData);
         console.log(setRef);
     };
 

@@ -10,8 +10,8 @@ const MainLayout = ({ children }) => {
     // Handle Sign Out
     const handleSignOut = async () => {
         console.log(user);
-        // await signOutUser();
-        // navigate("/"); // Redirect to Login
+        await signOutUser();
+        navigate("/"); // Redirect to Login
     };
 
     return (
