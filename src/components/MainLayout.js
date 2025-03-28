@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
 import "../styles/MainLayout.css";
 
 const MainLayout = ({ children }) => {
@@ -10,8 +11,8 @@ const MainLayout = ({ children }) => {
     // Handle Sign Out
     const handleSignOut = async () => {
         console.log(user);
-        // await signOutUser();
-        // navigate("/"); // Redirect to Login
+        await signOutUser();
+        navigate("/"); // Redirect to Login
     };
 
     return (
@@ -27,8 +28,12 @@ const MainLayout = ({ children }) => {
             </div>
 
             {/* Main Content Area */}
-            <div className="content">
-                {children} {/* This renders the page inside MainLayout */}
+            <div class="main-wrapper">
+                <Sidebar />
+                {/* Main Content Area */}
+                <div className="content">
+                    {children} {/* This renders the page inside MainLayout */}
+                </div>
             </div>
         </div>
     );

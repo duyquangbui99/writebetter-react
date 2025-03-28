@@ -1,0 +1,93 @@
+/* Sidebar Container */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    box-shadow: var(--shadow);
+    padding: 25px 15px;
+    height: 100%;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+}
+
+/* Sidebar Title */
+.sidebar-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Sidebar Buttons */
+.sidebar-button {
+    width: 100%;
+    padding: 10px 15px;
+    margin: 8px 0;
+    font-size: 16px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-weight: 500;
+    font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.sidebar-button:active {
+    transform: translateY(0);
+}
+
+/* Add space for icons if needed */
+.sidebar-button svg,
+.sidebar-button img {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Selected/active state for button */
+.sidebar-button.active {
+    background: var(--primary-hover);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+/* "New Editor" Button */
+.new-editor-btn {
+    background: #4a6fa5;
+    font-weight: bold;
+}
+
+.new-editor-btn:hover {
+    background: #3a5982;
+}
+
+/* List of Editors */
+.editor-list {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        padding: 20px 10px;
+    }
+
+    .sidebar-button {
+        padding: 8px 12px;
+        font-size: 15px;
+    }
+}

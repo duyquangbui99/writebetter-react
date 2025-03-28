@@ -1,31 +1,100 @@
-import React, { useState, useEffect } from "react";
+// src/components/Editor.js
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { addWritingData } from "../services/firestoreService.js";
+import { useParams, useNavigate } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../services/firebase";
+import { createNewEditor } from "../services/editorService";
+import { useEditor } from "../context/EditorContext"; // ✅
 import "../styles/Editor.css";
 
 const Editor = () => {
-    /*
-        Add testing user's uid to Firestore,
-        Add testing writing data to Firestore,
-        Add Set Button to push data to Firestore
-        Updated, I Zhi Chen, 2025/03/22
-    */
     const { user } = useAuth();
-    const [text, setText] = useState(""); // Store essay text
-    const [selectedText, setSelectedText] = useState(""); // Store selected text
-    const [paraphrasedText, setParaphrasedText] = useState("");
+    const navigate = useNavigate();
+    const { year, date, id } = useParams();
+    const { triggerRefresh } = useEditor(); // ✅
 
-    // Handle text changes
-    const handleChange = (event) => {
-        setText(event.target.value);
+    const [text, setText] = useState("");
+    const [selectedText, setSelectedText] = useState("");
+    const [paraphrasedText, setParaphrasedText] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [editorExists, setEditorExists] = useState(true);
+
+    // ✅ Load editor
+    useEffect(() => {
+        const fetchEditor = async () => {
+            if (!user) return;
+
+            if (!year || !date || !id) {
+                setLoading(false);
+                setEditorExists(false);
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "writeBetter", user.uid, year, date);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists() && docSnap.data()[id]) {
+                    const editor = docSnap.data()[id];
+                    setText(editor.content || "");
+                    setEditorExists(true);
+                } else {
+                    setEditorExists(false);
+                }
+            } catch (error) {
+                console.error("Error loading editor:", error);
+                setEditorExists(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEditor();
+    }, [user, year, date, id]);
+
+    const handleChange = async (event) => {
+        const newText = event.target.value;
+        setText(newText);
+
+        if (user && year && date && id) {
+            const docRef = doc(db, "writeBetter", user.uid, year, date);
+            await updateDoc(docRef, {
+                [`${id}.content`]: newText,
+                [`${id}.time`]: new Date().toISOString(),
+            });
+        }
     };
 
-    // Capture selected text using useEffect
+    // ✅ Manually create new editor if no valid one exists
+    const handleCreateNewEditor = async () => {
+        if (!user) return;
+
+        const now = new Date();
+        const generatedYear = now.getFullYear().toString();
+        const generatedDate = `${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
+        const generatedId = Date.now().toString();
+
+        const newData = {
+            title: "Untitled",
+            content: "",
+            time: now.toISOString(),
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+            totalWords: "0",
+        };
+
+        await createNewEditor(user, generatedId, newData);
+        triggerRefresh(); // ✅ Sidebar auto refresh
+        navigate(`/editor/${generatedYear}/${generatedDate}/${generatedId}`);
+    };
+
+    // ✅ Capture selection
     useEffect(() => {
         const handleSelection = () => {
             const textarea = document.getElementById("editor");
+            if (!textarea) return;
             const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-            setSelectedText(selection.trim()); // Trim to remove accidental spaces
+            setSelectedText(selection.trim());
         };
 
         document.addEventListener("mouseup", handleSelection);
@@ -37,29 +106,24 @@ const Editor = () => {
         };
     }, []);
 
-    const handleParaphrase = () => {
-        console.log("Selected Text for Paraphrasing:", selectedText);
-        setParaphrasedText(`(Paraphrased) ${selectedText}`);
-    };
-    const handleUpdateFirestore = async () => {
-        const essayData = {
-            content: "2025/03/22 IZhi Chen Firesotre Testing",
-            time: "2023-04-30 02:52:16",
-            timeZone: "UTC-6",
-            totoalWords: "20",
-        };
-        // Save to Firestore
-        const setRef = await addWritingData(user.uid, "2025", "03-22", "Title Name", essayData);
-        console.log(setRef);
-    };
+    // ✅ UI rendering
+    if (loading) return <p>Loading Editor...</p>;
+
+    if (!editorExists) {
+        return (
+            <div className="editor-empty-state">
+                <h2>No editor found</h2>
+                <p>Click below to create one</p>
+                <button onClick={handleCreateNewEditor}>Create New Editor</button>
+            </div>
+        );
+    }
 
     return (
         <div className="editor-container">
             <h1 className="editor-title">Write Better</h1>
 
-            {/* Two-column layout */}
             <div className="editor-wrapper">
-                {/* Original text area */}
                 <textarea
                     id="editor"
                     className="editor-textarea"
@@ -68,7 +132,6 @@ const Editor = () => {
                     placeholder="Start writing your essay here..."
                 ></textarea>
 
-                {/* Paraphrased text area */}
                 <textarea
                     className="editor-textarea paraphrased-textarea"
                     value={paraphrasedText}
@@ -77,15 +140,9 @@ const Editor = () => {
                 ></textarea>
             </div>
 
-            {/* Toolbar */}
             <div className="editor-toolbar">
-                <button className="toolbar-button" disabled={!selectedText} onClick={handleParaphrase}>
+                <button className="toolbar-button" disabled={!selectedText} onClick={() => setParaphrasedText(`(Paraphrased) ${selectedText}`)}>
                     Paraphrase
-                </button>
-            </div>
-            <div className="editor-toolbar">
-                <button className="toolbar-button" disabled={false} onClick={handleUpdateFirestore}>
-                    Update Essay
                 </button>
             </div>
         </div>
