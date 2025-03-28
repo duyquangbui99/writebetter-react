@@ -1,18 +1,51 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { db } from "../services/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import "../styles/Login.css";
 import googleIcon from "../assets/google-icon.svg";
 
 const Login = () => {
     const { user, signIn, signOutUser } = useAuth();
-    const navigate = useNavigate(); // Initialize navigate function
+    const navigate = useNavigate();
 
-    // Redirect to /editor if user is logged in
     useEffect(() => {
-        if (user) {
-            navigate("/editor"); // Redirect user to editor page
-        }
+        const initUser = async () => {
+            if (!user) return;
+
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                const now = new Date().toISOString();
+                const userData = {
+                    personal_info: {
+                        name: user.displayName || "No Name",
+                        email: user.email || "No Email",
+                    },
+                    personal_preference: {
+                        theme: "default",
+                        fontSize: "medium",
+                    },
+                    sys_user_info: {
+                        accountCreated: now,
+                        lastLogin: now,
+                    },
+                    // ✅ Initialize editors array
+                    editors: []
+                };
+                await setDoc(userRef, userData);
+                console.log("New user profile created with editors array");
+            } else {
+                console.log("User already exists");
+            }
+
+            // Redirect after login
+            navigate("/editor");
+        };
+
+        initUser();
     }, [user, navigate]);
 
     return (
@@ -23,8 +56,12 @@ const Login = () => {
 
                 {user ? (
                     <div className="login-user-info">
-                        <p className="welcome-message">Welcome, {user.displayName} to WriteBetter!</p>
-                        <button className="signout-button" onClick={signOutUser}>Sign Out</button>
+                        <p className="welcome-message">
+                            Welcome, {user.displayName || "User"} to WriteBetter!
+                        </p>
+                        <button className="signout-button" onClick={signOutUser}>
+                            Sign Out
+                        </button>
                     </div>
                 ) : (
                     <div className="login-actions">
@@ -32,7 +69,9 @@ const Login = () => {
                             <img className="google-icon" src={googleIcon} alt="Google" />
                             Sign in with Google
                         </button>
-                        <p className="login-helper-text">Sign in to save your work and access advanced features</p>
+                        <p className="login-helper-text">
+                            Sign in to save your work and access advanced features
+                        </p>
                     </div>
                 )}
             </div>
