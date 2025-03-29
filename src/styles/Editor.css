@@ -82,6 +82,43 @@
     transform: translateY(1px);
 }
 
+/* Title */
+.editor-title-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.editor-title-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.editor-title-input {
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    font-family: inherit;
+}
+
+.edit-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: 0.2s ease;
+}
+
+.edit-icon:hover {
+    opacity: 1;
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .editor-container {
