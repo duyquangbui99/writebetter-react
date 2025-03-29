@@ -19,6 +19,7 @@ const Editor = () => {
     const [paraphrasedText, setParaphrasedText] = useState("");
     const [loading, setLoading] = useState(true);
     const [editorExists, setEditorExists] = useState(true);
+    const [title, setTitle] = useState("Untitled");
 
     // ✅ Load editor
     useEffect(() => {
@@ -38,6 +39,7 @@ const Editor = () => {
                 if (docSnap.exists() && docSnap.data()[id]) {
                     const editor = docSnap.data()[id];
                     setText(editor.content || "");
+                    setTitle(editor.title || "Untitled");
                     setEditorExists(true);
                 } else {
                     setEditorExists(false);
@@ -61,6 +63,19 @@ const Editor = () => {
             const docRef = doc(db, "writeBetter", user.uid, year, date);
             await updateDoc(docRef, {
                 [`${id}.content`]: newText,
+                [`${id}.time`]: new Date().toISOString(),
+            });
+        }
+    };
+    // Handle title change and save
+    const handleTitleChange = async (e) => {
+        const newTitle = e.target.value;
+        setTitle(newTitle);
+
+        if (user && year && date && id) {
+            const docRef = doc(db, "writeBetter", user.uid, year, date);
+            await updateDoc(docRef, {
+                [`${id}.title`]: newTitle,
                 [`${id}.time`]: new Date().toISOString(),
             });
         }
@@ -121,7 +136,12 @@ const Editor = () => {
 
     return (
         <div className="editor-container">
-            <h1 className="editor-title">Write Better</h1>
+            <input
+                className="editor-title"
+                value={title}
+                onChange={handleTitleChange}
+                placeholder="Untitled"
+            />
 
             <div className="editor-wrapper">
                 <textarea
