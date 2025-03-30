@@ -3,8 +3,8 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    font-family: 'Poppins', 'Helvetica Neue', sans-serif;
-    background-color: #f5f7fa;
+    font-family: 'Quicksand', 'Poppins', sans-serif;
+    background-color: var(--main-bg);
 }
 
 /* Top Navigation Bar */
@@ -12,47 +12,51 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    background: var(--main-bg);
+    padding: 20px 40px;
+    background: var(--nav-bg);
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 /* App Title */
 .app-title {
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 26px;
+    font-weight: 700;
     color: var(--primary-color);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 /* Sign Out Button */
 .signout-button {
-    padding: 8px 16px;
+    padding: 10px 18px;
     font-size: 14px;
     background: var(--accent-color);
     color: white;
     border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: 'Poppins', 'Helvetica Neue', sans-serif;
-    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(209, 169, 143, 0.3);
 }
 
 .signout-button:hover {
     background: var(--accent-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(209, 169, 143, 0.4);
 }
 
 .signout-button:active {
     transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(209, 169, 143, 0.2);
 }
 
 /* Content Area */
 .content {
     flex: 1;
-    padding: 30px;
     overflow-y: auto;
     max-width: 1400px;
     margin: 0 auto;
@@ -63,45 +67,28 @@
 /* Main Wrapper: Sidebar on Left, Content on Right */
 .main-wrapper {
     display: flex;
-    height: 100vh;
+    height: calc(100vh - 80px);
 }
 
 /* Sidebar (Fixed Width on the Left) */
 .main-wrapper .sidebar {
-    width: 220px;
-    height: 100vh;
-    background: var(--main-bg);
-    color: white;
+    width: 240px;
+    height: 100%;
+    background: var(--nav-bg);
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 30px 20px;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    box-shadow: var(--shadow);
+    /* margin-right: 30px; */
 }
 
 /* Content (Takes Remaining Space on the Right) */
 .main-wrapper .content {
     flex: 1;
-    padding: 30px;
     overflow-y: auto;
-    background: var(--nav-bg);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-    border-radius: 5px;
-}
-
-
-
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 15px 20px;
-    }
-
-    .content {
-        padding: 20px 15px;
-    }
-
-    .app-title {
-        font-size: 20px;
-    }
+    /* background: var(--main-bg); */
+    border-radius: var(--border-radius);
 }
