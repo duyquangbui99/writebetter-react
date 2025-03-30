@@ -143,14 +143,20 @@ const Editor = () => {
     }, []);
 
     // ✅ UI rendering
-    if (loading) return <p>Loading Editor...</p>;
+    if (loading) return (
+        <div className="loading-container">
+            <p className="loading-text">Loading Editor...</p>
+        </div>
+    );
 
     if (!editorExists) {
         return (
             <div className="editor-empty-state">
-                <h2>No editor found</h2>
-                <p>Click below to create one</p>
-                <button onClick={handleCreateNewEditor}>Create New Editor</button>
+                <h2 className="empty-state-title">No editor found</h2>
+                <p className="empty-state-message">Click below to create one</p>
+                <button className="empty-state-button" onClick={handleCreateNewEditor}>
+                    Create New Editor
+                </button>
             </div>
         );
     }
