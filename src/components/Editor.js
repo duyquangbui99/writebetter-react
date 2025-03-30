@@ -7,6 +7,7 @@ import { db } from "../services/firebase";
 import { createNewEditor } from "../services/editorService";
 import { useEditor } from "../context/EditorContext"; // ✅
 import "../styles/Editor.css";
+import editIcon from "../assets/edit-icon.svg";
 
 const Editor = () => {
     const { user } = useAuth();
@@ -19,6 +20,9 @@ const Editor = () => {
     const [paraphrasedText, setParaphrasedText] = useState("");
     const [loading, setLoading] = useState(true);
     const [editorExists, setEditorExists] = useState(true);
+    const [title, setTitle] = useState("Untitled");
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+
 
     // ✅ Load editor
     useEffect(() => {
@@ -38,6 +42,7 @@ const Editor = () => {
                 if (docSnap.exists() && docSnap.data()[id]) {
                     const editor = docSnap.data()[id];
                     setText(editor.content || "");
+                    setTitle(editor.title || "Untitled");
                     setEditorExists(true);
                 } else {
                     setEditorExists(false);
@@ -65,6 +70,37 @@ const Editor = () => {
             });
         }
     };
+    // Handle title change and save
+    const handleTitleChange = async (e) => {
+        const newTitle = e.target.value;
+        setTitle(newTitle);
+
+        if (user && year && date && id) {
+            const editorDocRef = doc(db, "writeBetter", user.uid, year, date);
+            const userDocRef = doc(db, "users", user.uid);
+
+            await updateDoc(editorDocRef, {
+                [`${id}.title`]: newTitle,
+                [`${id}.time`]: new Date().toISOString(),
+            });
+
+            // ✅ Also update editors array inside the user document
+            const userSnap = await getDoc(userDocRef);
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                const updatedEditors = (data.editors || []).map((editor) =>
+                    editor.id === id && editor.year === year && editor.date === date
+                        ? { ...editor, title: newTitle, time: new Date().toISOString() }
+                        : editor
+                );
+
+                await updateDoc(userDocRef, { editors: updatedEditors });
+            }
+
+            triggerRefresh(); // ✅ Let Sidebar know about the change
+        }
+    };
+
 
     // ✅ Manually create new editor if no valid one exists
     const handleCreateNewEditor = async () => {
@@ -121,7 +157,30 @@ const Editor = () => {
 
     return (
         <div className="editor-container">
-            <h1 className="editor-title">Write Better</h1>
+            <div className="editor-title-container">
+                {isEditingTitle ? (
+                    <input
+                        className="editor-title-input"
+                        value={title}
+                        autoFocus
+                        onChange={handleTitleChange}
+                        onBlur={() => setIsEditingTitle(false)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") e.target.blur();
+                        }}
+                    />
+                ) : (
+                    <div className="editor-title-display">
+                        <h1>{title || "Untitled"}</h1>
+                        <img
+                            src={editIcon}
+                            alt="Edit"
+                            className="edit-icon"
+                            onClick={() => setIsEditingTitle(true)}
+                        />
+                    </div>
+                )}
+            </div>
 
             <div className="editor-wrapper">
                 <textarea

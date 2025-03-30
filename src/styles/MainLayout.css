@@ -1,17 +1,3 @@
-/* Variables for consistent styling */
-:root {
-    --primary-color: #4a6fa5;
-    --primary-hover: #3a5982;
-    --accent-color: #d9534f;
-    --accent-hover: #c9302c;
-    --bg-color: #ffffff;
-    --nav-bg: #f9fafb;
-    --border-color: #e5e7eb;
-    --text-color: #1a1a1a;
-    --shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-    --border-radius: 5px;
-}
-
 /* Main Layout */
 .main-layout {
     display: flex;
